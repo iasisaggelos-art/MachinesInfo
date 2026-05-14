@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>iasis | Κωδικοί Μηχανών – Κορωπί</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;0,9..40,700;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f14;
+    --surface: #161920;
+    --surface2: #1e2230;
+    --border: #2a2f3f;
+    --accent: #00d4a0;
+    --accent2: #4f8ef7;
+    --danger: #ff5572;
+    --warn: #f0a500;
+    --text: #e8ecf4;
+    --text-muted: #7a8099;
+    --text-dim: #4a5068;
+    --radius: 12px;
+    --shadow: 0 8px 32px rgba(0,0,0,0.4);
+    --glow: 0 0 20px rgba(0,212,160,0.15);
+  }
+  [data-theme="light"] {
+    --bg: #f0f2f8;
+    --surface: #ffffff;
+    --surface2: #f5f7fc;
+    --border: #dde2f0;
+    --accent: #00a37a;
+    --accent2: #2563eb;
+    --danger: #e0314f;
+    --warn: #c47e00;
+    --text: #1a1d2e;
+    --text-muted: #5a6180;
+    --text-dim: #9aa0bb;
+    --shadow: 0 4px 20px rgba(0,0,0,0.1);
+    --glow: 0 0 20px rgba(0,163,122,0.08);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 15px; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    transition: background 0.35s, color 0.35s;
+  }
+
+  /* ─── HEADER ─────────────────────────────────────────── */
+  header {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(12px);
+    display: flex; align-items: center; gap: 16px;
+    padding: 0 24px;
+    height: 64px;
+  }
+  .logo {
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    font-size: 1.1rem;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .logo-dot {
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--accent);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.8)} }
+  .header-title {
+    font-size: .85rem; color: var(--text-muted);
+    letter-spacing: .02em;
+  }
+  .header-actions { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+
+  /* ─── BUTTONS ─────────────────────────────────────────── */
+  .btn {
+    display: inline-flex; align-items: center; gap: 7px;
+    border: none; cursor: pointer; font-family: inherit;
+    font-size: .85rem; font-weight: 500; border-radius: 8px;
+    padding: 8px 14px; transition: all .2s; white-space: nowrap;
+  }
+  .btn-primary {
+    background: var(--accent); color: #000;
+  }
+  .btn-primary:hover { filter: brightness(1.12); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0,212,160,.35); }
+  .btn-secondary {
+    background: var(--surface2); color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-danger { background: var(--danger); color: #fff; }
+  .btn-danger:hover { filter: brightness(1.1); transform: translateY(-1px); }
+  .btn-icon {
+    background: var(--surface2); border: 1px solid var(--border);
+    color: var(--text-muted); width: 38px; height: 38px;
+    border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: all .2s;
+  }
+  .btn-icon:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-icon.active { background: var(--accent); border-color: var(--accent); color: #000; }
+
+  /* ─── LAYOUT ─────────────────────────────────────────── */
+  .main-wrap { max-width: 1400px; margin: 0 auto; padding: 28px 24px; }
+  .toolbar {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 24px; flex-wrap: wrap;
+  }
+  .search-wrap {
+    flex: 1; min-width: 200px;
+    position: relative;
+  }
+  .search-wrap svg {
+    position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+    color: var(--text-dim);
+  }
+  .search-input {
+    width: 100%; padding: 9px 12px 9px 38px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 8px; color: var(--text);
+    font-family: inherit; font-size: .9rem;
+    transition: border-color .2s, box-shadow .2s;
+    outline: none;
+  }
+  .search-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,212,160,.12); }
+  .search-input::placeholder { color: var(--text-dim); }
+
+  /* ─── STATS BAR ─────────────────────────────────────────── */
+  .stats-bar {
+    display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap;
+  }
+  .stat-pill {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px 18px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .stat-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 1.4rem; font-weight: 700;
+    color: var(--accent);
+  }
+  .stat-label { font-size: .8rem; color: var(--text-muted); }
+
+  /* ─── GRID ─────────────────────────────────────────── */
+  .machines-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 18px;
+  }
+
+  /* ─── CARD ─────────────────────────────────────────── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: transform .2s, box-shadow .2s, border-color .2s;
+    animation: fadeUp .35s ease both;
+  }
+  .card:hover { transform: translateY(-3px); box-shadow: var(--shadow), var(--glow); border-color: rgba(0,212,160,.3); }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+  .card-header {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface2);
+  }
+  .machine-icon {
+    width: 38px; height: 38px; border-radius: 10px;
+    background: linear-gradient(135deg, var(--accent2), var(--accent));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,.25);
+  }
+  .machine-name {
+    font-family: 'Space Mono', monospace;
+    font-weight: 700; font-size: .95rem;
+    color: var(--text); flex: 1;
+    line-height: 1.2;
+  }
+  .machine-meta { font-size: .75rem; color: var(--text-muted); margin-top: 2px; }
+  .card-actions { display: flex; gap: 6px; }
+  .card-body { padding: 12px; }
+  .user-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    align-items: center; gap: 8px;
+    padding: 8px 10px;
+    border-radius: 7px;
+    transition: background .15s;
+    margin-bottom: 4px;
+  }
+  .user-row:last-child { margin-bottom: 0; }
+  .user-row:hover { background: var(--surface2); }
+  .user-label { font-size: .72rem; color: var(--text-dim); font-weight: 500; letter-spacing: .05em; text-transform: uppercase; }
+  .user-value {
+    font-family: 'Space Mono', monospace;
+    font-size: .8rem; color: var(--text);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .pass-value {
+    font-family: 'Space Mono', monospace;
+    font-size: .8rem; color: var(--accent);
+  }
+  .pass-hidden { filter: blur(5px); user-select: none; transition: filter .2s; }
+  .pass-hidden:hover { filter: blur(0); }
+  .user-actions { display: flex; gap: 4px; }
+  .tiny-btn {
+    background: none; border: none; cursor: pointer;
+    color: var(--text-dim); padding: 3px;
+    border-radius: 4px; transition: color .15s, background .15s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .tiny-btn:hover { color: var(--accent); background: rgba(0,212,160,.1); }
+  .tiny-btn.del:hover { color: var(--danger); background: rgba(255,85,114,.1); }
+  .no-users {
+    text-align: center; padding: 18px;
+    color: var(--text-dim); font-size: .85rem;
+    font-style: italic;
+  }
+  .user-header-row {
+    display: grid; grid-template-columns: 1fr 1fr auto;
+    padding: 4px 10px 6px;
+    gap: 8px;
+  }
+
+  /* ─── MODAL ─────────────────────────────────────────── */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,.65); backdrop-filter: blur(6px);
+    z-index: 500; display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+    opacity: 0; visibility: hidden;
+    transition: opacity .25s, visibility .25s;
+  }
+  .modal-overlay.open { opacity: 1; visibility: visible; }
+  .modal {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; width: 100%; max-width: 480px;
+    box-shadow: 0 24px 64px rgba(0,0,0,.5);
+    transform: translateY(20px) scale(.97);
+    transition: transform .25s;
+  }
+  .modal-overlay.open .modal { transform: none; }
+  .modal-header {
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 12px;
+  }
+  .modal-title {
+    font-family: 'Space Mono', monospace;
+    font-weight: 700; font-size: 1rem; flex: 1;
+  }
+  .modal-body { padding: 20px 24px; }
+  .modal-footer {
+    padding: 16px 24px;
+    border-top: 1px solid var(--border);
+    display: flex; justify-content: flex-end; gap: 10px;
+  }
+  .form-group { margin-bottom: 16px; }
+  .form-label {
+    display: block; font-size: .8rem; font-weight: 600;
+    color: var(--text-muted); margin-bottom: 6px;
+    letter-spacing: .05em; text-transform: uppercase;
+  }
+  .form-input {
+    width: 100%; padding: 10px 12px;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 8px; color: var(--text);
+    font-family: inherit; font-size: .9rem;
+    transition: border-color .2s, box-shadow .2s;
+    outline: none;
+  }
+  .form-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,212,160,.12); }
+  .users-edit-list { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+  .user-edit-row {
+    display: grid; grid-template-columns: 1fr 1fr auto;
+    gap: 8px; align-items: center;
+  }
+  .user-edit-row .form-input { padding: 8px 10px; font-size: .82rem; }
+
+  /* ─── TOAST ─────────────────────────────────────────── */
+  #toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: var(--surface); border: 1px solid var(--border);
+    border-left: 4px solid var(--accent);
+    border-radius: 10px; padding: 12px 20px;
+    font-size: .88rem; font-weight: 500;
+    box-shadow: 0 8px 32px rgba(0,0,0,.4);
+    z-index: 1000; transition: transform .3s;
+    display: flex; align-items: center; gap: 10px;
+  }
+  #toast.show { transform: translateX(-50%) translateY(0); }
+  #toast.error { border-left-color: var(--danger); }
+
+  /* ─── LOADING ─────────────────────────────────────────── */
+  .loading-wrap {
+    grid-column: 1/-1; display: flex;
+    justify-content: center; align-items: center;
+    padding: 80px; gap: 16px; color: var(--text-muted);
+  }
+  .loading-spinner {
+    width: 40px; height: 40px;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+  }
+  @keyframes spin { to{transform:rotate(360deg)} }
+</style>
+</head>
+<body data-theme="dark">
+
+<header>
+  <div class="logo">
+    <div class="logo-dot"></div>
+    iasis
+  </div>
+  <span class="header-title">Κωδικοί Μηχανών · Κορωπί</span>
+  <div class="header-actions">
+    <button class="btn btn-primary" onclick="openAddMachine()">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Νέα Μηχανή
+    </button>
+    <button class="btn-icon" id="themeToggle" onclick="toggleTheme()" title="Αλλαγή θέματος">
+      <svg id="themeIcon" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      </svg>
+    </button>
+  </div>
+</header>
+
+<div class="main-wrap">
+  <div class="stats-bar" id="statsBar">
+    <div class="stat-pill">
+      <div>
+        <div class="stat-num" id="statMachines">0</div>
+        <div class="stat-label">Μηχανές</div>
+      </div>
+    </div>
+    <div class="stat-pill">
+      <div>
+        <div class="stat-num" id="statUsers">0</div>
+        <div class="stat-label">Κωδικοί</div>
+      </div>
+    </div>
+    
+  </div>
+
+  <div class="toolbar" id="mainToolbar">
+    <div class="search-wrap">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input class="search-input" id="searchInput" placeholder="Αναζήτηση μηχανής ή χρήστη…" oninput="renderMachines()">
+    </div>
+  
+  </div>
+
+  <div class="machines-grid" id="machinesGrid">
+    <div class="loading-wrap">
+      <div class="loading-spinner"></div>
+      <span>Σύνδεση με τη βάση δεδομένων…</span>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="machineModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="machine-icon">⚙️</div>
+      <div class="modal-title" id="modalTitle">Νέα Μηχανή</div>
+      <button class="btn-icon" onclick="closeModal('machineModal')">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="editId">
+      <div class="form-group">
+        <label class="form-label">Όνομα Μηχανής</label>
+        <input class="form-input" id="machineNameInput" placeholder="π.χ. GSHE300, Noack N950…">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Κωδικοί Χρηστών</label>
+        <div class="user-header-row">
+          <span style="font-size:.75rem;color:var(--text-dim);font-weight:600">USERNAME</span>
+          <span style="font-size:.75rem;color:var(--text-dim);font-weight:600">PASSWORD</span>
+          <span></span>
+        </div>
+        <div class="users-edit-list" id="usersEditList"></div>
+        <button class="btn btn-secondary" style="margin-top:10px;width:100%" onclick="addUserRow()">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Προσθήκη Χρήστη
+        </button>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('machineModal')">Ακύρωση</button>
+      <button class="btn btn-primary" onclick="saveMachine()">Αποθήκευση</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="machine-icon" style="background:linear-gradient(135deg,#ff5572,#c0392b)">🗑️</div>
+      <div class="modal-title">Διαγραφή Μηχανής</div>
+      <button class="btn-icon" onclick="closeModal('deleteModal')">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p style="color:var(--text-muted);line-height:1.6">Είστε σίγουροι ότι θέλετε να διαγράψετε τη μηχανή <strong id="deleteTargetName" style="color:var(--danger)"></strong>;</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('deleteModal')">Ακύρωση</button>
+      <button class="btn btn-danger" onclick="confirmDelete()">Διαγραφή</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast">
+  <span id="toastText"></span>
+</div>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getDatabase, ref, set, onValue, remove, push, update } 
+  from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyC025sxtpYtxgV2Uh2NJBrZsHmKuzkqwgE",
+  authDomain: "iasis-machines.firebaseapp.com",
+  databaseURL: "https://iasis-machines-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "iasis-machines",
+  storageBucket: "iasis-machines.firebasestorage.app",
+  messagingSenderId: "104610652922",
+  appId: "1:104610652922:web:316d0d645834f45d215f43"
+};
+
+let machines = {};
+let db = null;
+let dbRef = null;
+let deleteTargetId = null;
+
+// INIT
+try {
+  const app = initializeApp(firebaseConfig);
+  db = getDatabase(app);
+  dbRef = ref(db, 'machines');
+
+  onValue(dbRef, (snapshot) => {
+    machines = snapshot.val() || {};
+    renderMachines();
+    updateStats();
+  });
+} catch (e) {
+  console.error(e);
+}
+
+window.renderMachines = function() {
+  const q = (document.getElementById('searchInput')?.value || '').toLowerCase();
+  const grid = document.getElementById('machinesGrid');
+  const entries = Object.entries(machines).filter(([, m]) => {
+    if (!q) return true;
+    return m.name.toLowerCase().includes(q) || (m.users || []).some(u => u.username.toLowerCase().includes(q));
+  });
+
+  if (entries.length === 0) {
+    grid.innerHTML = '<div class="empty-state">Δεν βρέθηκαν αποτελέσματα</div>';
+    return;
+  }
+
+  grid.innerHTML = entries.map(([id, m]) => `
+    <div class="card">
+      <div class="card-header">
+        <div class="machine-icon">${getMachineEmoji(m.name)}</div>
+        <div class="machine-name">${esc(m.name)}</div>
+        <div class="card-actions">
+          <button class="btn-icon" onclick="openEdit('${id}')">✏️</button>
+          <button class="btn-icon" onclick="openDelete('${id}','${esc(m.name)}')">🗑️</button>
+        </div>
+      </div>
+      <div class="card-body">
+        ${(m.users || []).map(u => `
+          <div class="user-row">
+            <span class="user-value">${esc(u.username)}</span>
+            <span class="pass-value pass-hidden">${esc(u.password)}</span>
+            <button class="tiny-btn" onclick="copyText('${esc(u.password)}')">📋</button>
+          </div>`).join('')}
+      </div>
+    </div>`).join('');
+};
+
+window.saveMachine = async function() {
+  const id = document.getElementById('editId').value;
+  const name = document.getElementById('machineNameInput').value.trim();
+  const rows = document.querySelectorAll('#usersEditList .user-edit-row');
+  const users = [...rows].map(r => ({
+    username: r.querySelectorAll('input')[0].value.trim(),
+    password: r.querySelectorAll('input')[1].value.trim()
+  })).filter(u => u.username);
+
+  if (!name) return;
+  const data = { name, users };
+
+  if (id) await update(ref(db, `machines/${id}`), data);
+  else await push(dbRef, data);
+  
+  closeModal('machineModal');
+  showToast('Αποθηκεύτηκε!');
+};
+
+window.confirmDelete = async function() {
+  if (deleteTargetId) await remove(ref(db, `machines/${deleteTargetId}`));
+  closeModal('deleteModal');
+  showToast('Διαγράφηκε');
+};
+
+window.addUserRow = function(u='', p='') {
+  const row = document.createElement('div');
+  row.className = 'user-edit-row';
+  row.innerHTML = `<input class="form-input" value="${u}"><input class="form-input" value="${p}"><button class="tiny-btn" onclick="this.parentElement.remove()">❌</button>`;
+  document.getElementById('usersEditList').appendChild(row);
+};
+
+window.openEdit = function(id) {
+  const m = machines[id];
+  document.getElementById('editId').value = id;
+  document.getElementById('machineNameInput').value = m.name;
+  document.getElementById('usersEditList').innerHTML = '';
+  (m.users || []).forEach(u => addUserRow(u.username, u.password));
+  openModal('machineModal');
+};
+
+window.openAddMachine = function() {
+  document.getElementById('editId').value = '';
+  document.getElementById('machineNameInput').value = '';
+  document.getElementById('usersEditList').innerHTML = '';
+  addUserRow();
+  openModal('machineModal');
+};
+
+window.openDelete = (id, name) => { deleteTargetId = id; document.getElementById('deleteTargetName').textContent = name; openModal('deleteModal'); };
+window.openModal = id => document.getElementById(id).classList.add('open');
+window.closeModal = id => document.getElementById(id).classList.remove('open');
+window.copyText = txt => { navigator.clipboard.writeText(txt); showToast('Αντιγράφηκε!'); };
+function updateStats() { document.getElementById('statMachines').textContent = Object.keys(machines).length; document.getElementById('statUsers').textContent = Object.values(machines).reduce((s, m) => s + (m.users||[]).length, 0); }
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function getMachineEmoji(n) { const name = n.toUpperCase(); if(name.includes('LAETUS')) return '🔖'; if(name.includes('ROMACO')) return '🔄'; return '⚙️'; }
+function showToast(m) { const t = document.getElementById('toast'); document.getElementById('toastText').textContent = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2000); }
+window.toggleTheme = () => { const b = document.body; const isD = b.getAttribute('data-theme') === 'dark'; b.setAttribute('data-theme', isD ? 'light' : 'dark'); };
+window.exportJSON = () => { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(Object.values(machines), null, 2)], {type:'application/json'})); a.download = 'machines.json'; a.click(); };
+</script>
+</body>
+</html>
